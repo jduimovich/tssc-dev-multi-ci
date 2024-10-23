@@ -7,6 +7,7 @@ TEST_REPO_ORG="${MY_TEST_REPO_ORG:-redhat-appstudio}"
 # this will be copied into a temp directory
 # pipelines will be pushed into it for local test
 TEST_BUILD_REPO=https://github.com/$TEST_REPO_ORG/devfile-sample-nodejs-dance
+TEST_BUILD_GITLAB_REPO=https://gitlab.com/$TEST_REPO_ORG/devfile-sample-nodejs-dance
 
 # This should be optional, if it doesn't exist
 # the build can continue
@@ -28,8 +29,9 @@ if [ $BUILD_EXISTS == 200 ]; then
   echo "Source: $TEST_BUILD_REPO"
   echo "Local Source directory: $BUILD"
   git clone --quiet $TEST_BUILD_REPO $BUILD > /dev/null
+  (cd $BUILD; git remote add gitlab $TEST_BUILD_GITLAB_REPO)
 else
-  echo "Cannot find build tets repo $TEST_BUILD_REPO"
+  echo "Cannot find build test repo $TEST_BUILD_REPO"
 fi
 if [ $GITOPS_EXISTS == 200 ]; then
   echo "Gitops: $TEST_GITOPS_REPO"

@@ -3,7 +3,7 @@
 source setup-local-dev-repos.sh
 
 # The dev repos should can be enabled for Jenkins, gitlab and github actions
-# to enable gitlab, add a remote in the github export
+# to enable gitlab, add a remote in the github repo to match the repo in gitlab
 
 #Jenkins 
 
@@ -26,7 +26,7 @@ cp -r .github $BUILD
 function updateRepos() {
     REPO=$1  
     echo "Updating $REPO" 
-    pusd $REPO
+    pushd $REPO
     git add .
     git commit -m "Testing in CI"
     git push 
