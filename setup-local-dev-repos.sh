@@ -7,7 +7,7 @@ TEST_REPO_ORG="${MY_TEST_REPO_ORG:-redhat-appstudio}"
 # this will be copied into a temp directory
 # pipelines will be pushed into it for local test
 TEST_BUILD_REPO=https://github.com/$TEST_REPO_ORG/devfile-sample-nodejs-dance
-TEST_BUILD_GITLAB_REPO=https://gitlab.com/$TEST_REPO_ORG/devfile-sample-nodejs-dance
+TEST_BUILD_GITLAB_REPO=https://gitlab.com/$MY_TEST_REPO_GITLAB_ORG/devfile-sample-nodejs-dance
 
 # This should be optional, if it doesn't exist
 # the build can continue

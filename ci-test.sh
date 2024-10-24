@@ -2,6 +2,12 @@
 # get local test repos to patch
 source setup-local-dev-repos.sh
 
+if [ $TEST_REPO_ORG == "redhat-appstudio" ]; then
+    echo "Cannot do CI testing using the redhat-appstudio org"
+    echo "create forks in your own org and set up MY_TEST_REPO_ORG and MY_TEST_REPO_GITLAB_ORG"
+    exit
+fi
+
 # The dev repos should can be enabled for Jenkins, gitlab and github actions
 # to enable gitlab, add a remote in the github repo to match the repo in gitlab
 
@@ -66,6 +72,12 @@ function updateRepos() {
 }
 updateRepos $BUILD
 updateRepos $GITOPS
- 
+bash hack/ghub-set-vars https://github.com/$TEST_REPO_ORG/devfile-sample-nodejs-dance
+bash hack/glab-set-vars devfile-sample-nodejs-dance
+
+echo "Repos" 
+echo https://github.com/$TEST_REPO_ORG/devfile-sample-nodejs-dance
+echo https://gitlab.com/$MY_TEST_REPO_GITLAB_ORG/devfile-sample-nodejs-dance
+
  
 
