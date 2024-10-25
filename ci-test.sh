@@ -4,7 +4,7 @@ source setup-local-dev-repos.sh
 
 if [ $TEST_REPO_ORG == "redhat-appstudio" ]; then
     echo "Cannot do CI testing using the redhat-appstudio org"
-    echo "create forks in your own org and set up MY_TEST_REPO_ORG and MY_TEST_REPO_GITLAB_ORG"
+    echo "You must create forks in your own org and set up MY_TEST_REPO_ORG (github) and MY_TEST_REPO_GITLAB_ORG"
     exit
 fi
 
@@ -33,6 +33,8 @@ sed -i "s!\${{ values.repoURL }}!$OPTIONAL_REPO_UPDATE!g" $SETUP_ENV
 sed -i 's!export REKOR_HOST=.*$!export REKOR_HOST="\${MY_REKOR_HOST:-http://rekor-server.rhtap.svc}"!' $SETUP_ENV
 sed -i 's!export TUF_MIRROR=.*$!export TUF_MIRROR="\${MY_TUF_MIRROR:-http://tuf.rhtap.svc}"!' $SETUP_ENV
 
+
+cat $SETUP_ENV
 
 # Gitlab CI  
 echo "Update .gitlab-ci.yml file in $BUILD and $GITOPS" 
@@ -70,14 +72,21 @@ function updateRepos() {
     fi 
     popd
 }
-updateRepos $BUILD
-updateRepos $GITOPS
-bash hack/ghub-set-vars https://github.com/$TEST_REPO_ORG/devfile-sample-nodejs-dance
-bash hack/glab-set-vars devfile-sample-nodejs-dance
 
-echo "Repos" 
-echo https://github.com/$TEST_REPO_ORG/devfile-sample-nodejs-dance
-echo https://gitlab.com/$MY_TEST_REPO_GITLAB_ORG/devfile-sample-nodejs-dance
+updateRepos $BUILD     # does github and gitlab build repos with vars
+bash hack/ghub-set-vars $TEST_BUILD_REPO
+bash hack/glab-set-vars $(basename $TEST_BUILD_GITLAB_REPO) 
 
- 
+updateRepos $GITOPS # does github and gitlab 
+bash hack/ghub-set-vars $TEST_GITOPS_REPO
+bash hack/glab-set-vars $(basename $TEST_GITOPS_GITLAB_REPO) 
+
+echo "Github Build and Gitops Repos" 
+echo "Build: $TEST_BUILD_REPO"
+echo "Gitops: $TEST_GITOPS_REPO" 
+
+echo "Gitlab Build and Gitops Repos" 
+echo "Build: $TEST_BUILD_GITLAB_REPO"
+echo "Gitops: $TEST_GITOPS_GITLAB_REPO" 
+
 

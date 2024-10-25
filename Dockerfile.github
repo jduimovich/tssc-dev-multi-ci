@@ -4,4 +4,4 @@
 # (Currently we're using the exact same image as GitLab. That might change
 # in the future, so that's why there's a separate Dockerfile and tag.)
 #
-FROM quay.io/redhat-appstudio/dance-bootstrap-app:rhtap-runner-gitlab
+FROM quay.io/jduimovich0/dance-bootstrap-app:rhtap-runner-gitlab
