@@ -11,7 +11,7 @@ fi
 # The dev repos should can be enabled for Jenkins, gitlab and github actions
 # to enable gitlab, add a remote in the github repo to match the repo in gitlab
 
-OPTIONAL_REPO_UPDATE=$TEST_GITOPS_REPO
+OPTIONAL_REPO_UPDATE= 
 
 #Jenkins 
 
@@ -33,7 +33,7 @@ sed -i "s!\${{ values.repoURL }}!$OPTIONAL_REPO_UPDATE!g" $SETUP_ENV
 sed -i 's!export REKOR_HOST=.*$!export REKOR_HOST="\${MY_REKOR_HOST:-http://rekor-server.rhtap.svc}"!' $SETUP_ENV
 sed -i 's!export TUF_MIRROR=.*$!export TUF_MIRROR="\${MY_TUF_MIRROR:-http://tuf.rhtap.svc}"!' $SETUP_ENV
 
-
+echo "# Update forced CI test $(date)" >>$SETUP_ENV
 cat $SETUP_ENV
 
 # Gitlab CI  
