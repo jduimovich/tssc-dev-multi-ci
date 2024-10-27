@@ -1,3 +1,8 @@
 
-docker buildx build . -f Dockerfile.gitlab -t  quay.io/$MY_QUAY_USER/dance-bootstrap-app:rhtap-runner-gitlab
-docker push  quay.io/$MY_QUAY_USER/dance-bootstrap-app:rhtap-runner-gitlab
+for git in  gitlab github
+do
+    IMG=quay.io/$MY_QUAY_USER/dance-bootstrap-app:rhtap-runner-$git
+    echo "Building and pushing $IMG"
+    docker buildx build . -f Dockerfile.$git -t $IMG
+    docker push $IMG
+done
