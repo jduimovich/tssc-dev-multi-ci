@@ -61,8 +61,7 @@ if [ $TEST_REPO_ORG == "redhat-appstudio" ]; then
   echo "------------- INFO-------------"
   echo "DISABLING GITOPS REPO UPDATE for the "redhat-appstudio" org"
   echo "This prevents random accidental updates to the shared repo by dev team members with access"
-  export DISABLE_GITOPS_UPDATE=true
-  export TEST_GITOPS_REPO=""
+  export DISABLE_GITOPS_UPDATE=true 
   echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
   echo
 fi

@@ -19,7 +19,10 @@ function rox-deploy-check() {
 		echo "DISABLE_GITOPS_UPDATE is set. No repo update will occur"
 		exit_with_success_result
 	fi
-
+	if [ -z "$GITOPS_REPO_URL" ]; then
+		echo "GITOPS_REPO_URL not set to a value, deployment will not be updated"
+		exit_with_success_result
+	fi 
 	if [ -z "$ROX_API_TOKEN" ]; then
 		echo "ROX_API_TOKEN is not set, demo will exit with success"
 		exit_with_success_result
