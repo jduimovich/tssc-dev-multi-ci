@@ -17,15 +17,33 @@ PID=$(curl -s -L --header "$HEADER" "$URL/$MY_GITLAB_USER%2F$REPO" | jq ".id")
 function setVars() {
     NAME=$1
     VALUE=$2
-    echo "setting $NAME in https://gitlab.com/$MY_GITLAB_USER/$REPO"
+    #echo "setting $NAME in https://gitlab.com/$MY_GITLAB_USER/$REPO"
+
+   # for setting or deleting short values do it manually 
+    if (( "${#VALUE}" > 0 && "${#VALUE}" < 8 )); then   
+        CURRENT_VALUE=$(curl -s --header "PRIVATE-TOKEN: $MY_GITLAB_TOKEN" "$URL/$PID/variables/$NAME" | jq .value)
+        if [[ "$CURRENT_VALUE" != "$VALUE" ]]; then
+            echo "OK: Skipping short value $NAME as it is already set to <$VALUE>"
+        else 
+            echo "WARNING - SET $NAME manually to <$VALUE> as the gitlab API fails on short values"
+        fi 
+        return
+    fi  
 
     # Delete first because if the secret already exists then its value
     # won't be changed by the POST below
-    curl -s --request DELETE --header "$HEADER" "$URL/$PID/variables/$NAME"
+    curl -s --request DELETE --header "$HEADER" "$URL/$PID/variables/$NAME"  > /dev/null 2>&1
+ 
+    if (( "${#VALUE}" == 0 )); then    
+        echo "WARNING - Deleting $NAME manually as value is empty"  
+        return
+    fi  
 
     # Set the new key/value
-    curl -s --request POST --header "$HEADER" "$URL/$PID/variables" \
-        --form "key=$NAME" --form "value=$VALUE" --form "masked=true" | jq
+    CURRENT_VALUE=$(curl -s --request POST --header "$HEADER" "$URL/$PID/variables" \
+        --form "key=$NAME" --form "value=$VALUE" --form "masked=true" --form "raw=true" | jq .value)
+    
+    echo "SET $NAME to <$CURRENT_VALUE>"
 }
 
 setVars ROX_CENTRAL_ENDPOINT $ROX_CENTRAL_ENDPOINT
@@ -47,4 +65,4 @@ setVars TRUSTIFICATION_OIDC_CLIENT_ID "$TRUSTIFICATION_OIDC_CLIENT_ID"
 setVars TRUSTIFICATION_OIDC_CLIENT_SECRET "$TRUSTIFICATION_OIDC_CLIENT_SECRET"
 setVars TRUSTIFICATION_SUPPORTED_CYCLONEDX_VERSION "$TRUSTIFICATION_SUPPORTED_CYCLONEDX_VERSION"
 
-bash $SCRIPTDIR/glab-get-vars $1
+#bash $SCRIPTDIR/glab-get-vars $1
