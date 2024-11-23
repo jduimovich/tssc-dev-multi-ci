@@ -8,9 +8,12 @@ if [ $TEST_REPO_ORG == "redhat-appstudio" ]; then
     exit
 fi
 
-function  updateGitAndQuayRefs() { 
-    sed -i "s!quay.io/redhat-appstudio!quay.io/$MY_QUAY_USER!g" $1
-    sed -i "s!https://github.com/redhat-appstudio!https://github.com/$MY_GITHUB_USER!g" $1 
+function updateGitAndQuayRefs() {
+    if [ -f $1 ]; then
+        sed -i "s!quay.io/redhat-appstudio/rhtap-task-runner.*!quay.io/$MY_QUAY_USER/rhtap-task-runner:dev!g" $1
+        sed -i "s!https://github.com/redhat-appstudio!https://github.com/$MY_GITHUB_USER!g" $1
+        sed -i "s!RHTAP_Jenkins@main!RHTAP_Jenkins@dev!g" $1
+    fi 
 }
 #Jenkins 
 echo "Update Jenkins file in $BUILD and $GITOPS" 
@@ -38,8 +41,13 @@ function updateBuild() {
     updateGitAndQuayRefs $SETUP_ENV
     cat $SETUP_ENV
 }
-# Repos on github and gitlab, github reused for Jenkins
-# source repos get the name of the corresponding GITOPS REPO
+
+# create latest image for dev github and gitlab
+make build-push-image 
+bash hack/update-jenkins-library
+
+# Repos on github and gitlab, github and jenkins
+# source repos are updated with the name of the corresponding GITOPS REPO for update-deployment
 updateBuild $BUILD $TEST_GITOPS_REPO
 updateBuild $GITOPS  
 updateBuild $GITLAB_BUILD $TEST_GITOPS_GITLAB_REPO
